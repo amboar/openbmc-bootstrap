@@ -1,0 +1,69 @@
+From 3395ab63ed7563bebd41a21e47c29f9cb0ca4ac5 Mon Sep 17 00:00:00 2001
+From: Andrew Jeffery <andrew@aj.id.au>
+Date: Tue, 23 Jan 2018 15:01:43 +1100
+Subject: [PATCH] localedef: Hacks to work on Ubuntu 17.10
+
+Remove definition of struct __locale_struct and the typedef, as these are
+provided by the system headers.
+
+This is a temporary solution, will need to figure out the best way to avoid
+this.
+
+Change-Id: I93fdd56162077c06fd1dd403e3204172a429d81e
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ .../glibc/cross-localedef-native_2.24.bb           |  1 +
+ .../meta/recipes-core/glibc/glibc/locale.patch     | 29 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 import-layers/yocto-poky/meta/recipes-core/glibc/glibc/locale.patch
+
+diff --git a/import-layers/yocto-poky/meta/recipes-core/glibc/cross-localedef-native_2.24.bb b/import-layers/yocto-poky/meta/recipes-core/glibc/cross-localedef-native_2.24.bb
+index d4cccedb43a0..08db3981153e 100644
+--- a/import-layers/yocto-poky/meta/recipes-core/glibc/cross-localedef-native_2.24.bb
++++ b/import-layers/yocto-poky/meta/recipes-core/glibc/cross-localedef-native_2.24.bb
+@@ -36,6 +36,7 @@ SRC_URI = "${GLIBC_GIT_URI};branch=${SRCBRANCH};name=glibc \
+            file://0023-eglibc-Install-PIC-archives.patch \
+            file://0024-eglibc-Forward-port-cross-locale-generation-support.patch \
+            file://0025-Define-DUMMY_LOCALE_T-if-not-defined.patch \
++           file://locale.patch \
+ "
+ # Makes for a rather long rev (22 characters), but...
+ #
+diff --git a/import-layers/yocto-poky/meta/recipes-core/glibc/glibc/locale.patch b/import-layers/yocto-poky/meta/recipes-core/glibc/glibc/locale.patch
+new file mode 100644
+index 000000000000..612534669cd9
+--- /dev/null
++++ b/import-layers/yocto-poky/meta/recipes-core/glibc/glibc/locale.patch
+@@ -0,0 +1,29 @@
++--- a/locale/xlocale.h	2018-01-23 14:23:32.720133141 +1100
+++++ b/locale/xlocale.h	2018-01-23 14:23:44.052266203 +1100
++@@ -20,25 +20,6 @@
++ #ifndef _XLOCALE_H
++ #define _XLOCALE_H	1
++ 
++-/* Structure for reentrant locale using functions.  This is an
++-   (almost) opaque type for the user level programs.  The file and
++-   this data structure is not standardized.  Don't rely on it.  It can
++-   go away without warning.  */
++-typedef struct __locale_struct
++-{
++-  /* Note: LC_ALL is not a valid index into this array.  */
++-  struct __locale_data *__locales[13]; /* 13 = __LC_LAST. */
++-
++-  /* To increase the speed of this solution we add some special members.  */
++-  const unsigned short int *__ctype_b;
++-  const int *__ctype_tolower;
++-  const int *__ctype_toupper;
++-
++-  /* Note: LC_ALL is not a valid index into this array.  */
++-  const char *__names[13];
++-} *__locale_t;
++-
++-/* POSIX 2008 makes locale_t official.  */
++-typedef __locale_t locale_t;
+++typedef struct __locale_struct *__locale_t;
++ 
++ #endif /* xlocale.h */
+-- 
+2.14.1
+

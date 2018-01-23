@@ -4,4 +4,16 @@ set -euo pipefail
 
 set -x
 
-apt install gcc-6 g++-6
+if [ $# -lt 1 ];
+then
+    echo "Need a path to the OpenBMC repository"
+    exit 1
+fi
+
+sudo apt install gcc-6 g++-6
+
+cp $(dirname $0)/0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch $1
+
+pushd $1
+git am 0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch
+popd

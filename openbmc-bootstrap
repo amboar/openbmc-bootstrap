@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eou pipefail
+
+set -x
+
+# TODO: Make this more flexible as required
+# * List supported configurations
+# * Allow selection of a supported configuration
+./ubuntu/17.10/openbmc-bootstrap "$@"

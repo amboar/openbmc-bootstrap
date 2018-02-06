@@ -10,7 +10,24 @@ then
     exit 1
 fi
 
-sudo apt install gcc-6 g++-6
+PACKAGES=
+
+need_package() {
+    local bin="$1"
+    local pkg="$2"
+    if ! which "${bin}";
+    then
+	echo " ${pkg}"
+    fi
+}
+
+PACKAGES+="$(need_package gcc-6 gcc-6)"
+PACKAGES+="$(need_package g++-6 g++-6)"
+
+if [ -n "${PACKAGES}" ];
+then
+    sudo apt install ${PACKAGES}
+fi
 
 cp $(dirname $0)/0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch $1
 

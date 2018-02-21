@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+PATCHDIR=$(dirname $0)
+
 if [ $# -lt 1 ];
 then
     echo "Need a path to the OpenBMC repository"
@@ -27,10 +29,19 @@ then
     sudo apt-get install ${PACKAGES}
 fi
 
-cp $(dirname $0)/0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch $1
+
+cp ${PATCHDIR}/0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch \
+   ${PATCHDIR}/0001-automake-Don-t-discard-stderr-when-invoking-help2man.patch \
+   ${PATCHDIR}/0002-automake-Make-automake.in-compatible-with-Perl-5.22.patch \
+   $1
 
 pushd $1 > /dev/null
 git am --quiet 0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch
+if ! git log -1 37a0e4ddff58c0120cc5cfef104b60d0e180638c > /dev/null
+then
+   git am --quiet 0001-automake-Don-t-discard-stderr-when-invoking-help2man.patch
+   git am --quiet 0002-automake-Make-automake.in-compatible-with-Perl-5.22.patch
+fi
 popd > /dev/null
 
 echo export CC=gcc-6 CXX=g++-6

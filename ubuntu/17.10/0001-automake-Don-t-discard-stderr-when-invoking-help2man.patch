@@ -1,0 +1,47 @@
+From 5160859c44afb8c1576d72bfae2a46da5ae85bec Mon Sep 17 00:00:00 2001
+From: Andrew Jeffery <andrew@aj.id.au>
+Date: Fri, 17 Nov 2017 11:38:44 +1030
+Subject: [PATCH 1/3] automake: Don't discard stderr when invoking help2man
+
+Change-Id: Ia417a759eece1c767d587ee8fc39f37b23c6b475
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ ...0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch | 11 +++++++++++
+ .../meta/recipes-devtools/automake/automake_1.15.bb           |  3 ++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+ create mode 100644 import-layers/yocto-poky/meta/recipes-devtools/automake/automake/0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch
+
+diff --git a/import-layers/yocto-poky/meta/recipes-devtools/automake/automake/0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch b/import-layers/yocto-poky/meta/recipes-devtools/automake/automake/0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch
+new file mode 100644
+index 000000000000..2fd687ac16ac
+--- /dev/null
++++ b/import-layers/yocto-poky/meta/recipes-devtools/automake/automake/0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch
+@@ -0,0 +1,11 @@
++--- a/Makefile.in	2017-11-17 12:03:13.289290360 +1030
+++++ b/Makefile.in	2017-11-17 12:03:21.945248741 +1030
++@@ -710,7 +710,7 @@
++   $(AM_V_GEN): \
++     && $(MKDIR_P) doc \
++     && $(extend_PATH) \
++-    && $(PERL) $(srcdir)/doc/help2man --output=$@
+++    && $(PERL) $(srcdir)/doc/help2man --no-discard-stderr --output=$@
++ 
++ amhello_sources = \
++   doc/amhello/configure.ac \
+diff --git a/import-layers/yocto-poky/meta/recipes-devtools/automake/automake_1.15.bb b/import-layers/yocto-poky/meta/recipes-devtools/automake/automake_1.15.bb
+index a3c72fd3349f..7b33b9a33c40 100644
+--- a/import-layers/yocto-poky/meta/recipes-devtools/automake/automake_1.15.bb
++++ b/import-layers/yocto-poky/meta/recipes-devtools/automake/automake_1.15.bb
+@@ -21,7 +21,8 @@ RDEPENDS_${PN}_class-native = "autoconf-native hostperl-runtime-native"
+ SRC_URI += " file://python-libdir.patch \
+             file://buildtest.patch \
+             file://performance.patch \
+-            file://new_rt_path_for_test-driver.patch"
++            file://new_rt_path_for_test-driver.patch \
++            file://0001-doc-Don-t-discard-stderr-when-invoking-help2man.patch"
+ 
+ SRC_URI[md5sum] = "716946a105ca228ab545fc37a70df3a3"
+ SRC_URI[sha256sum] = "7946e945a96e28152ba5a6beb0625ca715c6e32ac55f2e353ef54def0c8ed924"
+-- 
+2.14.1
+

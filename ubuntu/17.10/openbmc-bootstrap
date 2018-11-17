@@ -40,7 +40,7 @@ cp ${PATCHDIR}/0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch \
 
 pushd $1 > /dev/null
 git am --quiet 0001-localedef-Hacks-to-work-on-Ubuntu-17.10.patch
-if ! git log -1 37a0e4ddff58c0120cc5cfef104b60d0e180638c > /dev/null
+if ! git merge-base --is-ancestor 37a0e4ddff58c0120cc5cfef104b60d0e180638c HEAD > /dev/null
 then
    git am --quiet 0001-automake-Don-t-discard-stderr-when-invoking-help2man.patch
    git am --quiet 0002-automake-Make-automake.in-compatible-with-Perl-5.22.patch
